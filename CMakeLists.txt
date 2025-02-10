@@ -3,6 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
@@ -11,13 +12,14 @@ endif()
 
 project ("Sulpur")
 find_package(Vulkan REQUIRED)
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 
 #glfw
 add_subdirectory(External/glfw-3.4)
 add_subdirectory(External/glm)
 
 # Add source to this project's executable.
-add_executable (Sulpur "src/Sulpur.cpp" "src/Sulpur.h" "src/app.hpp" "src/sulpur_window.hpp" "src/sulpur_window.cpp" "src/app.cpp")
+add_executable(Sulpur ${SOURCES})
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
