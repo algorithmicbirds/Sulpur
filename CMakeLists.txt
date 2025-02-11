@@ -23,7 +23,7 @@ set(RESOURCE_PATH ${CMAKE_SOURCE_DIR})
 
 # Add source to this project's executable.
 add_executable(Sulpur ${SOURCES})
-target_compile_definitions(Sulpur PUBLIC RESOURCE_PATH="${RESOURCE_PATH}/assets")
+add_compile_definitions(RESOURCE_PATH="${RESOURCE_PATH}/assets/")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Sulpur PROPERTY CXX_STANDARD 20)
