@@ -1,0 +1,14 @@
+BasedOnStyle: Google
+IndentWidth: 2
+ColumnLimit: 100
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterStruct: true
+  AfterClass: true
+  AfterNamespace: true
+  AfterExternBlock: true
+  BeforeElse: true
+  BeforeCatch: true
+  BeforeWhile: true

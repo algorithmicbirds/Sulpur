@@ -2,6 +2,7 @@
 
 #include "sulpur_window.hpp"
 #include "sulpur_pipeline.hpp"
+#include "sulpur_device.hpp"
 
 namespace Sulpur {
 	class App {
@@ -11,8 +12,13 @@ namespace Sulpur {
         
 		void run();
 	private:
-		Sulpur::SulpurWindow sulpur_window {WIDTH, HEIGHT, "Sulpur"};
-		Sulpur::SulpurPipeline sulpur_pipeline {RESOURCE_PATH "shaders/vertex_shader.spv", RESOURCE_PATH "shaders/fragment_shader.spv"};
+		Sulpur::SulpurWindow sulpurWindow {WIDTH, HEIGHT, "Sulpur"};
+		SulpurDevice sulpurDevice{ sulpurWindow };
+		Sulpur::SulpurPipeline sulpur_pipeline {
+			sulpurDevice, 
+			RESOURCE_PATH "shaders/vertex_shader.spv", 
+			RESOURCE_PATH "shaders/fragment_shader.spv", 
+			SulpurPipeline::defaultPipelineConfigInfo(WIDTH, HEIGHT)};
 	};
 }
 

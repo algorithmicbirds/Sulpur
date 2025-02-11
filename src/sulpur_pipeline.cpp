@@ -3,14 +3,20 @@
 #include <fstream>
 #include <stdexcept>
 #include <iostream>
+#include <stdint.h>
 
 namespace Sulpur {
-    
-    SulpurPipeline::SulpurPipeline(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
+   
+    SulpurPipeline::SulpurPipeline(SulpurDevice& device, const std::string& vertexShaderFile, const std::string& fragmentShaderFile, const PipelineConfigInfo configInfo) : sulpurDevice{device}
     {
-        createGraphicsPipeline(vertexShaderFile, fragmentShaderFile);
+        createGraphicsPipeline(vertexShaderFile, fragmentShaderFile, configInfo);
     }
 
+    PipelineConfigInfo SulpurPipeline::defaultPipelineConfigInfo(unsigned int width, unsigned int height)
+    {
+        PipelineConfigInfo configInfo{};
+        return configInfo;
+    }
 
     std::vector<char> SulpurPipeline::ReadFile(const std::string& filePath)
     {
@@ -26,13 +32,20 @@ namespace Sulpur {
         return buffer;
     }
 
-    void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
+    void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile, const std::string& fragmentShaderFile, const PipelineConfigInfo configInfo)
     {
-        auto fragmentShaderCode = ReadFile(fragmentShaderFile);
-        auto vertexShaderCode = ReadFile(vertexShaderFile);
-
-        std::cout << "vertexShader code size: " << vertexShaderCode.size() << "\n";
-        std::cout << "fragmentShader code size : " << fragmentShaderCode.size() << "\n";
     }
-    
+
+    void SulpurPipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule)
+    {
+        VkShaderModuleCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.codeSize = code.size();
+        createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+        if (vkCreateShaderModule(sulpurDevice.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create shader module");
+        }
+    }
+
 }

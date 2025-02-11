@@ -4,7 +4,7 @@
 
 void Sulpur::App::run()
 {
-	while (!sulpur_window.shouldClose()) {
+	while (!sulpurWindow.shouldClose()) {
 		glfwPollEvents();
 	}
 }
