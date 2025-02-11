@@ -8,3 +8,4 @@
 
 ## Progress
 - Day 1: Opened the window
+- Day 2: Worked on pipeline inialialization
