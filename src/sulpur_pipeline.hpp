@@ -5,15 +5,28 @@
 #include <string>
 #include <vector>
 
+
 namespace Sulpur {
 
-struct PipelineConfigInfo {};
+struct PipelineConfigInfo {
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+    VkViewport viewport;
+    VkRect2D scissor;
+    VkPipelineRasterizationStateCreateInfo rasterizationInfo;
+    VkPipelineMultisampleStateCreateInfo multisampleInfo;
+    VkPipelineColorBlendAttachmentState colorBlendAttachment;
+    VkPipelineColorBlendStateCreateInfo colorBlendInfo;
+    VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+    VkPipelineLayout pipelineLayout = nullptr;
+    VkRenderPass renderPass = nullptr;
+    uint32_t subpass = 0;
+};
 
 class SulpurPipeline {
    public:
     SulpurPipeline(SulpurDevice& device, const std::string& vertexShaderFile,
                    const std::string& fragmentShaderFile, const PipelineConfigInfo configInfo);
-    ~SulpurPipeline() {}
+    ~SulpurPipeline();
     SulpurPipeline(const SulpurPipeline&) = delete;
     void operator=(const SulpurPipeline&) = delete;
 
