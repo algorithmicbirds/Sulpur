@@ -1,7 +1,4 @@
-﻿# CMakeList.txt : CMake project for Sulpur, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.8)
 
 
 # Enable Hot Reload for MSVC compilers if supported.
@@ -12,13 +9,13 @@ endif()
 
 project ("Sulpur")
 find_package(Vulkan REQUIRED)
+
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 
-#glfw
+#External libs
 add_subdirectory(External/glfw-3.4)
 add_subdirectory(External/glm)
 
-#Resource path
 set(RESOURCE_PATH ${CMAKE_SOURCE_DIR})
 
 # Add source to this project's executable.
