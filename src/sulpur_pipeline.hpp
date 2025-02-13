@@ -9,9 +9,11 @@
 namespace Sulpur {
 
 struct PipelineConfigInfo {
+
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
     VkViewport viewport;
     VkRect2D scissor;
+    VkPipelineViewportStateCreateInfo viewportInfo;
     VkPipelineRasterizationStateCreateInfo rasterizationInfo;
     VkPipelineMultisampleStateCreateInfo multisampleInfo;
     VkPipelineColorBlendAttachmentState colorBlendAttachment;
@@ -29,8 +31,10 @@ class SulpurPipeline {
     ~SulpurPipeline();
     SulpurPipeline(const SulpurPipeline&) = delete;
     void operator=(const SulpurPipeline&) = delete;
+    void bind(VkCommandBuffer commandBuffer);
 
-    static PipelineConfigInfo defaultPipelineConfigInfo(unsigned int width, unsigned int height);
+  static void defaultPipelineConfigInfo(
+      PipelineConfigInfo& configInfo, uint32_t width, uint32_t height);
 
    private:
     static std::vector<char> ReadFile(const std::string& filePath);
