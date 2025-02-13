@@ -119,12 +119,9 @@ std::vector<char> SulpurPipeline::ReadFile(const std::string& filePath) {
 void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
                                             const std::string& fragmentShaderFile,
                                             const PipelineConfigInfo configInfo) {
-
-
-    
     assert(configInfo.pipelineLayout != VK_NULL_HANDLE &&
            "Cannot Create Graphics Pipeline no Pipelinelayout Provided In ConfigInfo");
-    
+
     assert(configInfo.pipelineLayout != VK_NULL_HANDLE &&
            "Cannot Create Graphics Pipelineline no renderpass Provided In ConfigInfo");
 
@@ -135,7 +132,7 @@ void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
     createShaderModule(fragmentShaderCode, &fragmentShaderModule);
 
     VkPipelineShaderStageCreateInfo shaderStages[2];
-   
+
     shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
     shaderStages[0].module = vertexShaderModule;
@@ -171,8 +168,8 @@ void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
     pipelineInfo.pRasterizationState = &configInfo.rasterizationInfo;
     pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
     pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;
-    pipelineInfo.pDynamicState = nullptr;
     pipelineInfo.pDepthStencilState = &configInfo.depthStencilInfo;
+    pipelineInfo.pDynamicState = nullptr;
 
     pipelineInfo.layout = configInfo.pipelineLayout;
     pipelineInfo.renderPass = configInfo.renderPass;
@@ -181,17 +178,10 @@ void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
     pipelineInfo.basePipelineIndex = -1;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-  /*  if (vkCreateGraphicsPipelines(sulpurDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr,
-                                  &graphicsPipeline) != VK_SUCCESS) {
-        throw std::runtime_error("pipeline failed to create");
-    }*/
-
-    VkResult result = vkCreateGraphicsPipelines(sulpurDevice.device(), VK_NULL_HANDLE, 1,
-                                                &pipelineInfo, nullptr, &graphicsPipeline);
-    if (result != VK_SUCCESS) {
-        std::cerr << "Pipeline creation failed with error code: " << result << std::endl;
-        throw std::runtime_error("pipeline failed to create");
-    }
+     if (vkCreateGraphicsPipelines(sulpurDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo,
+      nullptr, &graphicsPipeline) != VK_SUCCESS) { 
+         throw std::runtime_error("pipeline failed tocreate");
+      }
 }
 
 void SulpurPipeline::createShaderModule(const std::vector<char>& code,

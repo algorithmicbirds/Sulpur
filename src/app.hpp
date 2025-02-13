@@ -24,6 +24,10 @@ class App {
    private:
     void createPipelineLayout();
     void createPipeline();
+    void createVertexBuffer();
+    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+                      VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     void createCommandBuffers();
     void drawFrame();
 
@@ -34,5 +38,7 @@ class App {
     std::unique_ptr<SulpurPipeline> sulpurPipeline;
     VkPipelineLayout pipelineLayout;
     std::vector<VkCommandBuffer> commandBuffers;
+    VkBuffer vertexBuffer;
+    VkDeviceMemory vertexBufferMemory;
 };
 }  // namespace Sulpur
