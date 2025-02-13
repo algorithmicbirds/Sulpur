@@ -156,9 +156,11 @@ void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexAttributeDescriptionCount = 0;
     vertexInputInfo.vertexBindingDescriptionCount = 0;
+    vertexInputInfo.flags = 0;
     vertexInputInfo.pVertexAttributeDescriptions = nullptr;
     vertexInputInfo.pVertexBindingDescriptions = nullptr;
-    
+    vertexInputInfo.pNext = nullptr;
+
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = 2;
@@ -170,6 +172,7 @@ void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
     pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
     pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;
     pipelineInfo.pDynamicState = nullptr;
+    pipelineInfo.pDepthStencilState = &configInfo.depthStencilInfo;
 
     pipelineInfo.layout = configInfo.pipelineLayout;
     pipelineInfo.renderPass = configInfo.renderPass;
