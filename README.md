@@ -24,4 +24,4 @@
  - **Day 5**: Boilerplate code Shader Staging and Completed pipelinelayout
 
 ### February 15 2025
- - **Day 5**: Compeleted Graphics Pipeline. Triangle appears
+ - **Day 6**: Compeleted Graphics Pipeline. Triangle appears
