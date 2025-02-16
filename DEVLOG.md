@@ -1,4 +1,4 @@
-## Progress
+# Progress
 
 ### February 10 2025  
 - **Day 1**: Opened the window and set up the initial environment
