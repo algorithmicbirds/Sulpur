@@ -4,6 +4,7 @@
 #include "sulpur_pipeline.hpp"
 #include "sulpur_device.hpp"
 #include "sulpur_swap_chain.hpp"
+#include "sulpur_model.hpp"
 #include <memory>
 #include <vector>
 
@@ -22,9 +23,9 @@ class App {
     void run();
 
    private:
+    void loadModels();
     void createPipelineLayout();
     void createPipeline();
-    void createVertexBuffer();
     void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
                       VkBuffer& buffer, VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
@@ -40,5 +41,8 @@ class App {
     std::vector<VkCommandBuffer> commandBuffers;
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
+
+    std::unique_ptr<SulpurModel> sulpurModel;
+;
 };
 }  // namespace Sulpur

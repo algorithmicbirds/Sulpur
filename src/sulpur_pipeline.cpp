@@ -1,4 +1,5 @@
 #include "sulpur_pipeline.hpp"
+#include "sulpur_model.hpp"
 
 #include <fstream>
 #include <stdexcept>
@@ -148,14 +149,18 @@ void SulpurPipeline::createGraphicsPipeline(const std::string& vertexShaderFile,
     shaderStages[1].flags = 0;
     shaderStages[1].pNext = nullptr;
     shaderStages[1].pSpecializationInfo = nullptr;
-
+    
+    
     VkPipelineVertexInputStateCreateInfo vertexInputInfo;
+    auto bindingDescriptions = SulpurModel::Vertex::getBindingDescriptions();
+    auto attributeDescriptions = SulpurModel::Vertex::getAttributeDescriptions();
+
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+    vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
     vertexInputInfo.flags = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr;
+    vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
     vertexInputInfo.pNext = nullptr;
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};

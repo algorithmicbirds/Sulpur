@@ -4,6 +4,7 @@
 
 
 Sulpur::App::App() {
+    loadModels();
     createPipelineLayout();
     createPipeline();
     createCommandBuffers();
@@ -16,6 +17,15 @@ void Sulpur::App::run() {
         glfwPollEvents();
         drawFrame();
     }
+}
+
+void Sulpur::App::loadModels() {
+    std::vector<SulpurModel::Vertex> vertices = {
+        {{0.0f, -0.5f}},
+        {{0.5f, 0.5f}},
+        {{-0.5f, 0.5f}},
+    };
+    sulpurModel = std::make_unique<SulpurModel>(sulpurDevice, vertices);
 }
 
 void Sulpur::App::createPipelineLayout() {
@@ -80,7 +90,8 @@ void Sulpur::App::createCommandBuffers() {
     
     vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     sulpurPipeline->bind(commandBuffers[i]);
-    vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+    sulpurModel->bind(commandBuffers[i]);
+    sulpurModel->draw(commandBuffers[i]);
     vkCmdEndRenderPass(commandBuffers[i]);
     if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
         throw std::runtime_error("failed to record command buffer!");

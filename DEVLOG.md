@@ -14,3 +14,9 @@
 
 ### February 14 2025
  - **Day 5**: Boilerplate code Shader Staging and Completed pipelinelayout
+
+### February 15 2025
+ - **Day 6**: Completed Graphics pipeline triangle appears
+
+### February 18 2025
+ - **Day 7**: Added vertex buffer
