@@ -8,6 +8,7 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace Sulpur {
 
@@ -16,10 +17,11 @@ class SulpurSwapChain {
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
   SulpurSwapChain(SulpurDevice &deviceRef, VkExtent2D windowExtent);
+  SulpurSwapChain(SulpurDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<SulpurSwapChain> previous);
   ~SulpurSwapChain();
 
   SulpurSwapChain(const SulpurSwapChain &) = delete;
-  void operator=(const SulpurSwapChain &) = delete;
+  SulpurSwapChain operator=(const SulpurSwapChain &) = delete;
 
   VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
   VkRenderPass getRenderPass() { return renderPass; }
@@ -39,6 +41,7 @@ class SulpurSwapChain {
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
  private:
+  void init();
   void createSwapChain();
   void createImageViews();
   void createDepthResources();
@@ -67,8 +70,8 @@ class SulpurSwapChain {
 
   SulpurDevice &device;
   VkExtent2D windowExtent;
-
   VkSwapchainKHR swapChain;
+  std::shared_ptr<SulpurSwapChain> oldSwapChain;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;

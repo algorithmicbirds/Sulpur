@@ -15,17 +15,19 @@ class SulpurWindow {
 
     SulpurWindow(const SulpurWindow&) = delete;
     SulpurWindow& operator=(const SulpurWindow&) = delete;
-
+    bool wasWindowResized() { return frameBufferResized; }
+    void resetWindowResizedFlag() { frameBufferResized = false; }
     bool shouldClose() { return glfwWindowShouldClose(window); }
     VkExtent2D getExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
     void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
    private:
+    static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
     void InitWindow();
-
+    bool frameBufferResized = false;
     GLFWwindow* window;
-    const int height;
-    const int width;
+    int height;
+    int width;
     std::string window_name;
 };
 }  // namespace Sulpur

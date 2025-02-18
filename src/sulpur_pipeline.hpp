@@ -11,9 +11,9 @@ namespace Sulpur {
 struct PipelineConfigInfo {
 
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
-    VkViewport viewport;
-    VkRect2D scissor;
     VkPipelineViewportStateCreateInfo viewportInfo;
+    std::vector<VkDynamicState> dynamicStateEnables;
+    VkPipelineDynamicStateCreateInfo dynamicState;
     VkPipelineRasterizationStateCreateInfo rasterizationInfo;
     VkPipelineMultisampleStateCreateInfo multisampleInfo;
     VkPipelineColorBlendAttachmentState colorBlendAttachment;
@@ -30,11 +30,11 @@ class SulpurPipeline {
                    const std::string& fragmentShaderFile, const PipelineConfigInfo configInfo);
     ~SulpurPipeline();
     SulpurPipeline(const SulpurPipeline&) = delete;
-    void operator=(const SulpurPipeline&) = delete;
+    SulpurPipeline operator=(const SulpurPipeline&) = delete;
     void bind(VkCommandBuffer commandBuffer);
 
   static void defaultPipelineConfigInfo(
-      PipelineConfigInfo& configInfo, uint32_t width, uint32_t height);
+      PipelineConfigInfo& configInfo);
 
    private:
     static std::vector<char> ReadFile(const std::string& filePath);

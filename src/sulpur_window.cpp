@@ -16,11 +16,21 @@ void SulpurWindow::createWindowSurface(VkInstance instance, VkSurfaceKHR* surfac
         throw std::runtime_error("failed to create window surface");
     }
 }
+void SulpurWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+    auto sulpurWindow = reinterpret_cast<SulpurWindow*>(glfwGetWindowUserPointer(window));
+    sulpurWindow->frameBufferResized = true;
+    sulpurWindow->width = width;
+    sulpurWindow->height = height;
+
+    // std::cout << "framebufferResizeCallback: " << width << " " << height << std::endl;
+}
 void SulpurWindow::InitWindow() {
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     window = glfwCreateWindow(width, height, window_name.c_str(), nullptr, nullptr);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 }
 
 }  // namespace Sulpur

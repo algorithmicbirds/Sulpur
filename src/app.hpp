@@ -26,16 +26,15 @@ class App {
     void loadModels();
     void createPipelineLayout();
     void createPipeline();
-    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
-                      VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     void createCommandBuffers();
+    void freeCommandBuffers();
     void drawFrame();
+    void recreateSwapChain();
+    void recordCommandBuffer(int imageIndex);
 
     Sulpur::SulpurWindow sulpurWindow{WIDTH, HEIGHT, "Sulpur"};
     SulpurDevice sulpurDevice{sulpurWindow};
-    SulpurSwapChain sulpurSwapChain{sulpurDevice, sulpurWindow.getExtent()};
-
+    std::unique_ptr<SulpurSwapChain> sulpurSwapChain;
     std::unique_ptr<SulpurPipeline> sulpurPipeline;
     VkPipelineLayout pipelineLayout;
     std::vector<VkCommandBuffer> commandBuffers;
