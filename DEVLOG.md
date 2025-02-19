@@ -20,3 +20,6 @@
 
 ### February 18 2025
  - **Day 7**: Added vertex buffer
+
+### February 19 2025
+ - **Day 8**: Swapchain Recreation
