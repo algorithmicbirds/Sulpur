@@ -22,7 +22,7 @@ SulpurSwapChain::SulpurSwapChain(SulpurDevice &deviceRef, VkExtent2D extent,
     init();
 
     // clean up old swap chain
-    swapChain = nullptr;
+    oldSwapChain = nullptr;
 
 }
 
