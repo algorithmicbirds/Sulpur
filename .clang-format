@@ -1,15 +1,12 @@
-BasedOnStyle: Google
-IndentWidth: 4
+BasedOnStyle: LLVM
 SortIncludes: false
-ColumnLimit: 100
-BraceWrapping:
-  AfterFunction: true
-  AfterControlStatement: true
-  AfterEnum: true
-  AfterStruct: true
-  AfterClass: true
-  AfterNamespace: true
-  AfterExternBlock: true
-  BeforeElse: true
-  BeforeCatch: true
-  BeforeWhile: true
+IndentWidth: 2
+UseTab: Never
+ColumnLimit: 80
+AlignArrayOfStructures: Left
+BreakBeforeBraces: Allman
+BinPackArguments: true
+BinPackParameters: true
+AlignAfterOpenBracket: BlockIndent
+Cpp11BracedListStyle: true
+

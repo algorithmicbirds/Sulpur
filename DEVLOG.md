@@ -23,3 +23,6 @@
 
 ### February 19 2025
  - **Day 8**: Swapchain Recreation
+
+### February 21 2025
+ - **Day 9**: Push constants

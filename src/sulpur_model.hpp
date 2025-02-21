@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include "sulpur_device.hpp"
 #define GLM_FORCE_RADIANS
@@ -6,36 +6,38 @@
 
 #include <glm/glm.hpp>
 
-namespace Sulpur {
+namespace Sulpur
+{
 
+class SulpurModel
+{
 
+public:
+  struct Vertex
+  {
+    glm::vec2 position;
+    glm::vec3 color;
 
+    static std::vector<VkVertexInputBindingDescription>
+    getBindingDescriptions();
+    static std::vector<VkVertexInputAttributeDescription>
+    getAttributeDescriptions();
+  };
+  SulpurModel(SulpurDevice &device, const std::vector<Vertex> &vertices);
+  ~SulpurModel();
 
-class SulpurModel {
-      
-   public:
-    struct Vertex {
-        glm::vec2 position;
-        glm::vec3 color;
+  SulpurModel(const SulpurModel &) = delete;
+  SulpurModel &operator=(const SulpurModel &) = delete;
 
-        static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
-        static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
-    };
-     SulpurModel(SulpurDevice& device, const std::vector<Vertex>& vertices);
-    ~SulpurModel();
+  void bind(VkCommandBuffer commandBuffer);
+  void draw(VkCommandBuffer commandBuffer);
 
-    SulpurModel(const SulpurModel&) = delete;
-    SulpurModel& operator=(const SulpurModel&) = delete;
+private:
+  void createVertexBuffer(const std::vector<Vertex> &vertrices);
 
-    void bind(VkCommandBuffer commandBuffer);
-    void draw(VkCommandBuffer commandBuffer);
-
-   private: 
-       void createVertexBuffer(const std::vector<Vertex>& vertrices);
-
-	   SulpurDevice& sulpurDevice;
-       VkBuffer vertexBuffer;
-       VkDeviceMemory vertexBufferMemory;
-       uint32_t vertexCount;
-    };
-}
+  SulpurDevice &sulpurDevice;
+  VkBuffer vertexBuffer;
+  VkDeviceMemory vertexBufferMemory;
+  uint32_t vertexCount;
+};
+} // namespace Sulpur

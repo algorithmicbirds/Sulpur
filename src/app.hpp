@@ -8,40 +8,42 @@
 #include <memory>
 #include <vector>
 
-namespace Sulpur {
-class App {
-   public:
-    static constexpr int WIDTH = 800;
-    static constexpr int HEIGHT = 600;
-    
-    App();
-    ~App();
+namespace Sulpur
+{
+class App
+{
+public:
+  static constexpr int WIDTH = 800;
+  static constexpr int HEIGHT = 600;
 
-    App(const App&) = delete;
-    App& operator=(const App&) = delete;
+  App();
+  ~App();
 
-    void run();
+  App(const App &) = delete;
+  App &operator=(const App &) = delete;
 
-   private:
-    void loadModels();
-    void createPipelineLayout();
-    void createPipeline();
-    void createCommandBuffers();
-    void freeCommandBuffers();
-    void drawFrame();
-    void recreateSwapChain();
-    void recordCommandBuffer(int imageIndex);
+  void run();
 
-    Sulpur::SulpurWindow sulpurWindow{WIDTH, HEIGHT, "Sulpur"};
-    SulpurDevice sulpurDevice{sulpurWindow};
-    std::unique_ptr<SulpurSwapChain> sulpurSwapChain;
-    std::unique_ptr<SulpurPipeline> sulpurPipeline;
-    VkPipelineLayout pipelineLayout;
-    std::vector<VkCommandBuffer> commandBuffers;
-    VkBuffer vertexBuffer;
-    VkDeviceMemory vertexBufferMemory;
+private:
+  void loadModels();
+  void createPipelineLayout();
+  void createPipeline();
+  void createCommandBuffers();
+  void freeCommandBuffers();
+  void drawFrame();
+  void recreateSwapChain();
+  void recordCommandBuffer(int imageIndex);
 
-    std::unique_ptr<SulpurModel> sulpurModel;
-;
+  Sulpur::SulpurWindow sulpurWindow{WIDTH, HEIGHT, "Sulpur"};
+  SulpurDevice sulpurDevice{sulpurWindow};
+  std::unique_ptr<SulpurSwapChain> sulpurSwapChain;
+  std::unique_ptr<SulpurPipeline> sulpurPipeline;
+  VkPipelineLayout pipelineLayout;
+  std::vector<VkCommandBuffer> commandBuffers;
+  VkBuffer vertexBuffer;
+  VkDeviceMemory vertexBufferMemory;
+
+  std::unique_ptr<SulpurModel> sulpurModel;
+  ;
 };
-}  // namespace Sulpur
+} // namespace Sulpur

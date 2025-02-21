@@ -10,20 +10,28 @@
 #include <vector>
 #include <memory>
 
-namespace Sulpur {
+namespace Sulpur
+{
 
-class SulpurSwapChain {
- public:
+class SulpurSwapChain
+{
+public:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
   SulpurSwapChain(SulpurDevice &deviceRef, VkExtent2D windowExtent);
-  SulpurSwapChain(SulpurDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<SulpurSwapChain> previous);
+  SulpurSwapChain(
+      SulpurDevice &deviceRef, VkExtent2D windowExtent,
+      std::shared_ptr<SulpurSwapChain> previous
+  );
   ~SulpurSwapChain();
 
   SulpurSwapChain(const SulpurSwapChain &) = delete;
   SulpurSwapChain operator=(const SulpurSwapChain &) = delete;
 
-  VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
+  VkFramebuffer getFrameBuffer(int index)
+  {
+    return swapChainFramebuffers[index];
+  }
   VkRenderPass getRenderPass() { return renderPass; }
   VkImageView getImageView(int index) { return swapChainImageViews[index]; }
   size_t imageCount() { return swapChainImages.size(); }
@@ -32,15 +40,18 @@ class SulpurSwapChain {
   uint32_t width() { return swapChainExtent.width; }
   uint32_t height() { return swapChainExtent.height; }
 
-  float extentAspectRatio() {
-    return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
+  float extentAspectRatio()
+  {
+    return static_cast<float>(swapChainExtent.width) /
+           static_cast<float>(swapChainExtent.height);
   }
   VkFormat findDepthFormat();
 
   VkResult acquireNextImage(uint32_t *imageIndex);
-  VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
+  VkResult
+  submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
- private:
+private:
   void init();
   void createSwapChain();
   void createImageViews();
@@ -51,9 +62,11 @@ class SulpurSwapChain {
 
   // Helper functions
   VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-      const std::vector<VkSurfaceFormatKHR> &availableFormats);
+      const std::vector<VkSurfaceFormatKHR> &availableFormats
+  );
   VkPresentModeKHR chooseSwapPresentMode(
-      const std::vector<VkPresentModeKHR> &availablePresentModes);
+      const std::vector<VkPresentModeKHR> &availablePresentModes
+  );
   VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
   VkFormat swapChainImageFormat;
@@ -80,4 +93,4 @@ class SulpurSwapChain {
   size_t currentFrame = 0;
 };
 
-}
+} // namespace Sulpur
