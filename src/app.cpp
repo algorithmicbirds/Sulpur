@@ -1,6 +1,5 @@
 #include "app.hpp"
 #include <vulkan/vulkan_core.h>
-#include <array>
 #include <glm/ext/vector_float2.hpp>
 #include "sulpur_pipeline.hpp"
 
@@ -8,20 +7,27 @@
 #define GLM_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
+#include <glm/gtc/constants.hpp>
+#include <chrono>
+#include <thread>
+#include <array>
+
 namespace Sulpur
 {
+
 struct SimplePushConstantData
 {
+
+  glm::mat2 transform{1.0f};
   glm::vec2 offset;
   alignas(16) glm::vec3 color;
-  glm::mat2 transform{1.0f};
 };
 
 } // namespace Sulpur
 
 Sulpur::App::App()
 {
-  loadModels();
+  loadGameObjects();
   createPipelineLayout();
   recreateSwapChain();
   createCommandBuffers();
@@ -40,14 +46,37 @@ void Sulpur::App::run()
     drawFrame();
   }
 }
-void Sulpur::App::loadModels()
+
+void Sulpur::App::loadGameObjects()
 {
-  std::vector<SulpurModel::Vertex> vertices = {
+  std::vector<SulpurModel::Vertex> vertices{
       {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
       {{0.5f, 0.5f},  {0.0f, 1.0f, 0.0f}},
       {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
   };
-  sulpurModel = std::make_unique<SulpurModel>(sulpurDevice, vertices);
+
+  std::vector<glm::vec3> colors{
+      {0.1f, 0.4f, 0.8f},
+      {0.2f, 0.6f, 1.f },
+      {0.3f, 0.7f, 1.f },
+      {0.2f, 0.4f, 0.9f},
+      {0.0f, 0.5f, 0.8f},
+  };
+  for (auto &color : colors)
+  {
+    color = glm::pow(color, glm::vec3{2.2f});
+  }
+
+  auto sulpurModel = std::make_shared<SulpurModel>(sulpurDevice, vertices);
+  for (int i = 0; i < 40; i++)
+  {
+    auto triangle = SulpurGameObject::createGameObject();
+    triangle.model = sulpurModel;
+    triangle.transform2d.scale = glm::vec2(.5f) + i * 0.025f;
+    triangle.transform2d.rotation = i * glm::two_pi<float>() * .025f;
+    triangle.color = colors[i % colors.size()];
+    gameObjects.push_back(std::move(triangle));
+  }
 }
 
 void Sulpur::App::createPipelineLayout()
@@ -188,29 +217,53 @@ void Sulpur::App::recordCommandBuffer(int imageIndex)
   scissor.extent = sulpurSwapChain->getSwapChainExtent();
   vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
 
-  sulpurPipeline->bind(commandBuffers[imageIndex]);
-  sulpurModel->bind(commandBuffers[imageIndex]);
-
-  for (int j = 0; j < 4; j++)
-  {
-    SimplePushConstantData push{};
-    push.offset = {0.0f, -0.4f + j * 0.3f};
-    push.color = {0.0f, 0.0f, 0.2f + 0.2f * j};
-
-    vkCmdPushConstants(
-        commandBuffers[imageIndex], pipelineLayout,
-        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-        sizeof(SimplePushConstantData), &push
-    );
-    sulpurModel->draw(commandBuffers[imageIndex]);
-  }
-
-  sulpurModel->draw(commandBuffers[imageIndex]);
+  renderGameObject(commandBuffers[imageIndex]);
 
   vkCmdEndRenderPass(commandBuffers[imageIndex]);
   if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
   {
     throw std::runtime_error("failed to record command buffer!");
+  }
+}
+
+void Sulpur::App::renderGameObject(VkCommandBuffer commandBuffer)
+{
+  // Calculate delta time
+  auto currentFrameTime = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point lastFrameTime;
+  std::chrono::duration<float> deltaTime = currentFrameTime - lastFrameTime;
+  lastFrameTime = currentFrameTime;
+
+  // Update
+  int i = 0;
+  double rotationSpeed =
+      0.00000001; // Rotation speed (adjust this value to control the speed)
+  for (auto &obj : gameObjects)
+  {
+    i += 1;
+    // Adjust rotation so that the objects rotate in a 360-degree loop
+    obj.transform2d.rotation = glm::mod<float>(
+        obj.transform2d.rotation + rotationSpeed * deltaTime.count() * i,
+        2.f * glm::pi<float>()
+    );
+  }
+
+  // Render
+  sulpurPipeline->bind(commandBuffer);
+  for (auto &obj : gameObjects)
+  {
+    SimplePushConstantData push{};
+    push.offset = obj.transform2d.translation;
+    push.color = obj.color;
+    push.transform = obj.transform2d.mat2();
+
+    vkCmdPushConstants(
+        commandBuffer, pipelineLayout,
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+        sizeof(SimplePushConstantData), &push
+    );
+    obj.model->bind(commandBuffer);
+    obj.model->draw(commandBuffer);
   }
 }
 

@@ -5,6 +5,7 @@
 #include "sulpur_device.hpp"
 #include "sulpur_swap_chain.hpp"
 #include "sulpur_model.hpp"
+#include "sulpur_game_object.hpp"
 #include <memory>
 #include <vector>
 
@@ -25,7 +26,7 @@ public:
   void run();
 
 private:
-  void loadModels();
+  void loadGameObjects();
   void createPipelineLayout();
   void createPipeline();
   void createCommandBuffers();
@@ -33,6 +34,7 @@ private:
   void drawFrame();
   void recreateSwapChain();
   void recordCommandBuffer(int imageIndex);
+  void renderGameObject(VkCommandBuffer commandBuffer);
 
   Sulpur::SulpurWindow sulpurWindow{WIDTH, HEIGHT, "Sulpur"};
   SulpurDevice sulpurDevice{sulpurWindow};
@@ -43,7 +45,7 @@ private:
   VkBuffer vertexBuffer;
   VkDeviceMemory vertexBufferMemory;
 
-  std::unique_ptr<SulpurModel> sulpurModel;
+  std::vector<SulpurGameObject> gameObjects;
   ;
 };
 } // namespace Sulpur
