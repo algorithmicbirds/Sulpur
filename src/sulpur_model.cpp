@@ -1,9 +1,10 @@
 #include "sulpur_model.hpp"
+#include <glm/ext/vector_float2.hpp>
+
 
 #include <cstring>
 
 namespace Sulpur {
-
 
 SulpurModel::SulpurModel(SulpurDevice& device, const std::vector<Vertex>& vertices)
     : sulpurDevice{device} {

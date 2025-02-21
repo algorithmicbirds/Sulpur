@@ -1,7 +1,21 @@
 #include "app.hpp"
+#include <vulkan/vulkan_core.h>
 #include <array>
+#include <glm/ext/vector_float2.hpp>
 #include "sulpur_pipeline.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
+namespace Sulpur {
+struct SimplePushConstantData{
+    glm::vec2 offset;
+    alignas(16) glm::vec3 color;
+    glm::mat2 transform{1.0f};
+};
+
+}
 
 Sulpur::App::App() {
     loadModels();
@@ -29,12 +43,18 @@ void Sulpur::App::loadModels() {
 
 
 void Sulpur::App::createPipelineLayout() {
+    
+    VkPushConstantRange pushConstantRange{};
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    pushConstantRange.offset = 0;
+    pushConstantRange.size = sizeof(SimplePushConstantData);
+    
     VkPipelineLayoutCreateInfo pipelineLayoutInfo {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;
     pipelineLayoutInfo.pSetLayouts = nullptr;
-    pipelineLayoutInfo.pushConstantRangeCount = 0;
-    pipelineLayoutInfo.pPushConstantRanges = nullptr;
+    pipelineLayoutInfo.setLayoutCount = 0;
+    pipelineLayoutInfo.pushConstantRangeCount = 1;
+    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
     if (vkCreatePipelineLayout(sulpurDevice.device(), &pipelineLayoutInfo, nullptr,
                                &pipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create pipeline layout");
@@ -46,6 +66,7 @@ void Sulpur::App::createPipeline() {
     assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
     assert(sulpurSwapChain != nullptr && "Cannot create pipeline before swap chain");
 
+    
     PipelineConfigInfo pipelineConfig{};
     SulpurPipeline::defaultPipelineConfigInfo(pipelineConfig);
     pipelineConfig.renderPass = sulpurSwapChain->getRenderPass();
@@ -62,20 +83,19 @@ void Sulpur::App::recreateSwapChain() {
         glfwWaitEvents();
     }
     vkDeviceWaitIdle(sulpurDevice.device());
-
+    
     if (sulpurSwapChain == nullptr) {
         sulpurSwapChain = std::make_unique<SulpurSwapChain>(sulpurDevice, extent);
     } else {
         sulpurSwapChain =
-            std::make_unique<SulpurSwapChain>(sulpurDevice, extent, std::move(sulpurSwapChain));
+        std::make_unique<SulpurSwapChain>(sulpurDevice, extent, std::move(sulpurSwapChain));
         if (sulpurSwapChain->imageCount() != commandBuffers.size()) {
             freeCommandBuffers();
             createCommandBuffers();
         }
     }
-
+    
     createPipeline();
-
 }
 
 void Sulpur::App::createCommandBuffers() { 
@@ -85,17 +105,17 @@ void Sulpur::App::createCommandBuffers() {
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandPool = sulpurDevice.getCommandPool();
     allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
-
+    
     if (vkAllocateCommandBuffers(sulpurDevice.device(), &allocInfo, commandBuffers.data()) !=
-        VK_SUCCESS) {
+    VK_SUCCESS) {
         throw std::runtime_error("failed to allocate command buffers!");
     }
 }
 
 void Sulpur::App::freeCommandBuffers() {
     vkFreeCommandBuffers(sulpurDevice.device(), sulpurDevice.getCommandPool(),
-                         static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-
+    static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+    
 }
 
 void Sulpur::App::recordCommandBuffer(int imageIndex) {
@@ -134,7 +154,21 @@ void Sulpur::App::recordCommandBuffer(int imageIndex) {
     
     sulpurPipeline->bind(commandBuffers[imageIndex]);
     sulpurModel->bind(commandBuffers[imageIndex]);
-    sulpurModel->draw(commandBuffers[imageIndex]);
+
+    
+        for(int j = 0; j < 4; j++) {
+            SimplePushConstantData push{};
+            push.offset = {0.0f, -0.4f + j * 0.3f};
+            push.color = {0.0f, 0.0f, 0.2f + 0.2f *j};
+    
+            vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , 
+                0, sizeof(SimplePushConstantData), &push);
+                sulpurModel->draw(commandBuffers[imageIndex]);
+
+        }
+
+        sulpurModel->draw(commandBuffers[imageIndex]);
+
     vkCmdEndRenderPass(commandBuffers[imageIndex]);
     if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS) {
         throw std::runtime_error("failed to record command buffer!");
@@ -149,7 +183,7 @@ void Sulpur::App::drawFrame() {
         recreateSwapChain();
         return;
     }
-
+    
     if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
         throw std::runtime_error("failed to acquire swap chain image!");
     }

@@ -22,6 +22,25 @@ set(RESOURCE_PATH ${CMAKE_SOURCE_DIR})
 add_executable(Sulpur ${SOURCES})
 add_compile_definitions(RESOURCE_PATH="${RESOURCE_PATH}/assets/")
 
+if(WIN32)
+    add_custom_command(
+        TARGET Sulpur PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "Compiling shaders using compile.bat"
+        COMMAND ${CMAKE_SOURCE_DIR}/assets/shaders/compile.bat
+        COMMENT "Running shader compilation on Windows"
+    )
+elseif(UNIX)
+    add_custom_command(
+        TARGET Sulpur PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "Compiling shaders using compile.sh"        
+        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan ${CMAKE_SOURCE_DIR}
+        COMMAND ${CMAKE_SOURCE_DIR}/assets/shaders/compile.sh
+        COMMENT "Running shader compilation on Unix"
+    )
+endif()
+
+
+
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Sulpur PROPERTY CXX_STANDARD 20)
 endif()
